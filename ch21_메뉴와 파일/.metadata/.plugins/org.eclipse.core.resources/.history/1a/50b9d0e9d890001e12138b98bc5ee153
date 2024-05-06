@@ -1,0 +1,95 @@
+
+
+import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+
+public class DrawingPanel extends JComponent {
+	
+	public static final int CIRCLE = 0;
+	public static final int SQUARE = 1; 
+	
+	private static int selectedShapeType = DrawingPanel.CIRCLE;
+	private ArrayList<Shape> shapes;
+	
+	
+	public DrawingPanel() { // 생성자 
+		shapes = new ArrayList<Shape>();
+		
+		this.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Shape shape; 
+				
+				if (selectedShapeType == DrawingPanel.CIRCLE) {
+					shape = new Circle(e.getX(), e.getY(), 30); 
+				} else {
+					shape = new Square(e.getX(), e.getY(), 60); 
+				}
+				
+				shapes.add(shape); 
+				repaint(); 
+			}
+			
+		});
+		
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		// 저장된 모든 도형 그리기 
+		for (Shape shape : shapes) {
+			shape.draw(g);
+		}
+	}
+	
+	public static void setSelectedShapeType(int n) {
+		selectedShapeType = n;
+	}
+	
+	public void clear() {
+		shapes.clear();
+		repaint();
+		
+	}
+	
+
+    public void saveToTxFile(String filePath) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
+            for (Shape shape : shapes) {
+                // 도형 정보를 파일에 저장
+                writer.println(shape.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public void loadFromTxFile(String filePath) {
+//        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+//            shapes.clear(); // 기존 도형 제거
+//
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                // 파일에서 읽은 도형 정보를 이용하여 도형 생성
+//                Shape shape = createShapeFromLine(line);
+//                if (shape != null) {
+//                    shapes.add(shape);
+//                }
+//            }
+//
+//            repaint(); // 변경된 도형을 다시 그리기
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+}

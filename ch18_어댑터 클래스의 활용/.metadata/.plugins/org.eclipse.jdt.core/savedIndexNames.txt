@@ -1,0 +1,4 @@
+INDEX VERSION 1.134+C:\Users\82106\Desktop\MY\PROGRAMMING\JAVA프로그래밍\ch18_어댑터 클래스의 활용\.metadata\.plugins\org.eclipse.jdt.core
+3133778062.index
+1865797976.index
+1696264553.index

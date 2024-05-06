@@ -1,0 +1,92 @@
+package ch21;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
+public class DrawingApp extends JFrame {
+
+	public DrawingApp() { // 생성자
+		super("Drawing Application");
+
+		buildGUI();
+		createMenuBar();
+
+		this.setSize(800, 600);
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				int rval = JOptionPane.showConfirmDialog(DrawingApp.this, "종료 하시겠습니까?", "확인",
+						JOptionPane.YES_NO_OPTION);
+
+				if (rval == JOptionPane.YES_OPTION) {
+					System.exit(0);
+				}
+
+				JOptionPane.showMessageDialog(DrawingApp.this, "종료가 취소되었습니다.", "알림", JOptionPane.INFORMATION_MESSAGE);
+
+			}
+
+		});
+
+		this.setVisible(true);
+	}
+
+	private void createMenuBar() { // 메뉴바 만들기
+
+		JMenuBar menuBar = new JMenuBar();
+
+		menuBar.add(createFileMenu());
+		menuBar.add(createShapeMenu());
+
+		this.setJMenuBar(menuBar);
+
+	}
+
+	private JMenu createShapeMenu() { // 모양 메뉴 만들기
+
+		JMenu shapeMenu = new JMenu("Shape");
+
+		shapeMenu.add(new JMenuItem("Circle"));
+		shapeMenu.add(new JMenuItem("Squre"));
+
+		return shapeMenu;
+	}
+
+	private JMenu createFileMenu() { // 파일 메뉴 만들기
+
+		JMenu fileMenu = new JMenu("File");
+
+		fileMenu.add(new JMenuItem("New"));
+		fileMenu.add(new JMenuItem("Load"));
+		fileMenu.add(new JMenuItem("save"));
+		
+		// 파일 출력 창 
+		JFileChooser chooser = new JFileChooser();
+		
+
+		return fileMenu;
+	}
+
+	private void buildGUI() { // GUI 생성하기
+	
+	}
+
+	public static void main(String[] args) {
+
+		JFrame.setDefaultLookAndFeelDecorated(true);
+		JDialog.setDefaultLookAndFeelDecorated(true);
+
+		new DrawingApp();
+	}
+
+}

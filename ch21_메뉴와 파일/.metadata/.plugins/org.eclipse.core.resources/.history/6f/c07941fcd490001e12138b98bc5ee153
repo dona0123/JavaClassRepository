@@ -1,0 +1,68 @@
+
+
+import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+
+public class DrawingPanel extends JComponent {
+	
+	public static final int CIRCLE = 0;
+	public static final int SQUARE = 1; 
+	
+	private int selectedShapeType = DrawingPanel.CIRCLE;
+	private ArrayList<Shape> shapes;
+	
+	
+	public DrawingPanel() { // 생성자 
+		shapes = new ArrayList<Shape>();
+		
+		this.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Shape shape; 
+				
+				if (selectedShapeType == DrawingPanel.CIRCLE) {
+					shape = new Circle(e.getX(), e.getY(), 30); 
+				} else {
+					shape = new Square(e.getX(), e.getY(), 60); 
+				}
+				
+				shapes.add(shape); 
+				repaint(); 
+			}
+			
+		});
+		
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		// 저장된 모든 도형을 그립니다.
+		for (Shape shape : shapes) {
+			shape.draw(g);
+		}
+	}
+	
+	public void setSelectedShapeType(int n) {
+		
+	}
+	
+	public void clear() {
+		
+	}
+	
+	public void saveToTxFile(String s){
+		
+	}
+	
+	public void loadFromTxFile(String s) {
+		
+	}
+
+}

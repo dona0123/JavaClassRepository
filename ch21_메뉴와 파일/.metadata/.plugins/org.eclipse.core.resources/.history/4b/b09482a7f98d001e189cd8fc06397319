@@ -1,0 +1,7 @@
+package ch21;
+
+import javax.swing.JComponent;
+
+public class DrawingPanel extends JComponent {
+
+}

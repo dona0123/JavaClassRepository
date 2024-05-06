@@ -1,0 +1,36 @@
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class InputNumber {
+
+	// 숫자 문자로 구성된 하나의 문자열을 입력받아 이를 정수로 변환하는 함수
+	public static int getInteger() {
+		Scanner s = new Scanner(System.in);
+
+		System.out.println("Enter a number: ");
+		String sNum = s.nextLine();
+
+		// 정수가 입력되지 않은 경우 예외처리
+		try {
+			int nNum = Integer.parseInt(sNum);
+			return nNum;
+		} catch (InputMismatchException e) {
+			e.getMessage(); 
+			System.out.println("Not a number. Please enter again.");
+			return -1;
+		} finally {
+			s.close();
+		}
+	}
+
+	public static void main(String[] args) {
+		int n;
+
+		do {
+			n = getInteger();
+		} while (n == -1);
+		
+		System.out.println(n);
+	}
+
+}

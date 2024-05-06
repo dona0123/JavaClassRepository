@@ -1,0 +1,124 @@
+
+import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+
+public class DrawingPanel extends JComponent {
+
+	public static final int CIRCLE = 0;
+	public static final int SQUARE = 1;
+
+	private int selectedShapeType = DrawingPanel.CIRCLE;
+	private ArrayList<Shape> shapes;
+
+	public DrawingPanel() { // 생성자
+		shapes = new ArrayList<Shape>();
+
+		this.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Shape shape;
+
+				if (selectedShapeType == DrawingPanel.CIRCLE) {
+					shape = new Circle(e.getX(), e.getY(), 30);
+				} else {
+					shape = new Square(e.getX(), e.getY(), 60);
+				}
+
+				shapes.add(shape);
+				repaint();
+			}
+
+		});
+
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+
+		// 저장된 모든 도형 그리기
+		for (Shape shape : shapes) {
+			shape.draw(g);
+		}
+	}
+
+	public void setSelectedShapeType(int n) {
+		selectedShapeType = n;
+	}
+
+	public void clear() {
+		shapes.clear();
+		repaint();
+	}
+
+	  public void saveToFile(String filePath) {
+	        try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(filePath));
+	             DataOutputStream dataOutputStream = new DataOutputStream(bufferedOutputStream)) {
+
+	            dataOutputStream.writeInt(shapes.size()); // 도형 개수 저장
+
+	            for (Shape shape : shapes) {
+	                dataOutputStream.writeInt(shape.getX()); 
+	                dataOutputStream.writeInt(shape.getY());
+
+	                if (shape instanceof Circle) {
+	                    dataOutputStream.writeInt(DrawingPanel.CIRCLE);
+	                    dataOutputStream.writeInt(((Circle) shape).getRadius());
+	                } else if (shape instanceof Square) {
+	                    dataOutputStream.writeInt(DrawingPanel.SQUARE);
+	                    dataOutputStream.writeInt(((Square) shape).getSide());
+	                }
+	            }
+
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    public void loadFromFile(String filePath) {
+	        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(filePath));
+	             DataInputStream dataInputStream = new DataInputStream(bufferedInputStream)) {
+
+	            int size = dataInputStream.readInt(); // 도형 개수 읽기
+
+	            shapes.clear(); // 기존 도형 지우기
+
+	            for (int i = 0; i < size; i++) {
+	                int x = dataInputStream.readInt();
+	                int y = dataInputStream.readInt();
+
+	                int shapeType = dataInputStream.readInt();
+	                Shape shape;
+
+	                if (shapeType == DrawingPanel.CIRCLE) {
+	                    int radius = dataInputStream.readInt();
+	                    shape = new Circle(x, y, radius);
+	                } else {
+	                    int side = dataInputStream.readInt();
+	                    shape = new Square(x, y, side);
+	                }
+
+	                shapes.add(shape);
+	            }
+
+	            repaint(); // 화면 다시 그리기
+
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+}

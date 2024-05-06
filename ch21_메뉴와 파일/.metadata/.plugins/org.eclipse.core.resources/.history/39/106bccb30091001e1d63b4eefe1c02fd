@@ -1,0 +1,115 @@
+
+import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+
+public class DrawingPanel extends JComponent {
+
+	public static final int CIRCLE = 0;
+	public static final int SQUARE = 1;
+
+	private int selectedShapeType = DrawingPanel.CIRCLE;
+	private ArrayList<Shape> shapes;
+
+	public DrawingPanel() { // 생성자
+		shapes = new ArrayList<Shape>();
+
+		this.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Shape shape;
+
+				if (selectedShapeType == DrawingPanel.CIRCLE) {
+					shape = new Circle(e.getX(), e.getY(), 30);
+				} else {
+					shape = new Square(e.getX(), e.getY(), 60);
+				}
+
+				shapes.add(shape);
+				repaint();
+			}
+
+		});
+
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+
+		// 저장된 모든 도형 그리기
+		for (Shape shape : shapes) {
+			shape.draw(g);
+		}
+	}
+
+	public void setSelectedShapeType(int n) {
+		selectedShapeType = n;
+	}
+
+	public void clear() {
+		shapes.clear();
+		repaint();
+
+	}
+
+	// 파일에 도형 정보 저장
+    public void saveToFile(String filePath) {
+        try (PrintWriter writer = new PrintWriter(filePath)) {
+            for (Shape shape : shapes) {
+                writer.println(shape.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 파일에서 도형 정보 불러오기
+    public void loadFromFile(String filePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            shapes.clear(); // 기존 도형 제거
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Shape shape = this.createShapeFromLine(line);
+                if (shape != null) {
+                    shapes.add(shape);
+                }
+            }
+
+            repaint(); // 변경된 도형을 다시 그리기
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private Shape createShapeFromLine(String line) {
+        // 파일에서 읽은 도형 정보를 파싱하여 Shape 객체 생성
+        String[] parts = line.split(" ");
+        if (parts.length < 4) {
+            return null;
+        }
+
+        int x = Integer.parseInt(parts[1]);
+        int y = Integer.parseInt(parts[2]);
+
+        if (parts[0].equals("Circle")) {
+            int radius = Integer.parseInt(parts[3]);
+            return new Circle(x, y, radius);
+        } else if (parts[0].equals("Square")) {
+            int side = Integer.parseInt(parts[3]);
+            return new Square(x, y, side);
+        }
+
+        return null;
+    }
+
+}

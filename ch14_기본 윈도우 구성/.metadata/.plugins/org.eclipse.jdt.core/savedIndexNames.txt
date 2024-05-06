@@ -1,0 +1,1 @@
+INDEX VERSION 1.134+C:\Users\82106\Desktop\MY\PROGRAMMING\JAVA프로그래밍\ch14_기본 윈도우 구성\.metadata\.plugins\org.eclipse.jdt.core
